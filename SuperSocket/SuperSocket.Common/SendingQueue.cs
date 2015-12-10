@@ -22,6 +22,50 @@ namespace SuperSocket.Common
         private ushort m_TrackID = 1;
         private int m_InnerOffset = 0;
 
+        #region Public Properties
+
+        /// <summary>
+        /// Get the track ID
+        /// </summary>
+        public ushort TrackID
+        {
+            get
+            {
+                return m_TrackID;
+            }
+        }
+
+        #endregion
+
+        #region 构造函数
+
+        /// <summary>
+        /// Initializes a new instance of the class
+        /// </summary>
+        /// <param name="globalQueue"></param>
+        /// <param name="offset"></param>
+        /// <param name="capacity"></param>
+        public SendingQueue(ArraySegment<byte>[] globalQueue, int offset, int capacity)
+        {
+            m_GlobalQueue = globalQueue;
+            _offset = offset;
+            _capacity = capacity;
+        }
+
+        #endregion
+
+        #region Public Method
+
+
+        //public bool TryEnqueue(ArraySegment<byte> item, out bool conflict, ushort trackId)
+        //{
+        //    conflict = false;
+
+        //    var oldCount = _currentCount;
+        //}
+
+        #endregion
+
         #region Ilist 接口
         public int IndexOf(ArraySegment<byte> item)
         {
