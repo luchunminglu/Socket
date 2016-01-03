@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace SuperSocket.Common
 {
     /// <summary>
-    /// Extension class for DictionaryExtension
+    /// Extension class for IDictionary
     /// </summary>
     public static class DictionaryExtension
     {
+
         /// <summary>
         /// Gets the value by key.
         /// </summary>
@@ -46,5 +47,6 @@ namespace SuperSocket.Common
                 return (T)valueObj;
             }
         }
+
     }
 }

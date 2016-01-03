@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace SuperSocket.Common
 {
     /// <summary>
-    /// A list of ArraySegment
+    /// ArraySegmentList
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class ArraySegmentList<T>:IList<T> where T:IEquatable<T>
@@ -16,7 +16,7 @@ namespace SuperSocket.Common
         #region Private Member
 
         /// <summary>
-        /// 底层的存储
+        /// 底层存储
         /// </summary>
         private readonly List<ArraySegmentEx<T>> _segments;
 
@@ -31,6 +31,10 @@ namespace SuperSocket.Common
             }
         }
 
+        /// <summary>
+        /// 在List中存储的所有的元素的数目
+        /// 即SUM(每个ArraySegment.Count)
+        /// </summary>
         private int _count;
 
         #endregion
@@ -43,33 +47,52 @@ namespace SuperSocket.Common
         public ArraySegmentList()
         {
             _segments = new List<ArraySegmentEx<T>>();
-        }
-
+        } 
 
         #endregion
 
-        #region IList 接口实现
+        #region 实现IList接口
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <param name="item"></param>
         public void Add(T item)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
         public void Clear()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool Contains(T item)
         {
             throw new NotImplementedException();
@@ -78,13 +101,18 @@ namespace SuperSocket.Common
         /// <summary>
         /// 将ArraySegment中的元素复制到array中以arrayIndex开始的位置
         /// </summary>
-        /// <param name="array"></param>
-        /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
+        /// <param name="array">被复制到的数组</param>
+        /// <param name="arrayIndex">the zero-based index in array at which copy begins,指第一个参数array被复制的开始位置</param>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            CopyTo(array, 0, arrayIndex, Math.Min(array.Length-arrayIndex, _count));
+            CopyTo(array, 0, arrayIndex, Math.Min(array.Length - arrayIndex, _count));
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool Remove(T item)
         {
             throw new NotImplementedException();
@@ -93,12 +121,12 @@ namespace SuperSocket.Common
         /// <summary>
         /// List中所有元素T的数目。 是所有ArraySegment中T加起来的数目
         /// </summary>
-        public int Count { get { return _count; } }
+        public int Count { get{return _count;} }
 
         /// <summary>
         /// 暗示List只读
         /// </summary>
-        public bool IsReadOnly { get { return true; }}
+        public bool IsReadOnly { get { return true; } }
 
         /// <summary>
         /// 获取在整个List中的第一个匹配元素的索引, 范围[0,_count]
@@ -127,18 +155,27 @@ namespace SuperSocket.Common
             return -1;
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="item"></param>
         public void Insert(int index, T item)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Not Supported
+        /// </summary>
+        /// <param name="index"></param>
         public void RemoveAt(int index)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Get or set the element at index
+        /// Gets and set The element at index
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -146,16 +183,16 @@ namespace SuperSocket.Common
         {
             get
             {
-                if (index < 0 && index >= _count)
+                if (index < 0 || index >= _count)
                 {
-                    throw  new IndexOutOfRangeException("Index out  of range");
+                    throw new IndexOutOfRangeException("Index out of range");
                 }
 
-                Tuple<int, int> tuple = BinarySearch(0, _segments.Count-1, index);
+                Tuple<int, int> tuple = BinarySearch(0, _segments.Count - 1, index);
 
                 if (tuple == null)
                 {
-                    throw  new Exception("发生不可能的逻辑异常，重点关注");
+                    throw  new Exception("发生不可能的逻辑异常，需重点关注");
                 }
 
                 ArraySegmentEx<T> foundItem = _segments[tuple.Item1];
@@ -164,7 +201,7 @@ namespace SuperSocket.Common
             }
             set
             {
-                if (index < 0 && index >= _count)
+                if (index < 0 || index >= _count)
                 {
                     throw new IndexOutOfRangeException("Index out  of range");
                 }
@@ -182,45 +219,9 @@ namespace SuperSocket.Common
             }
         }
 
-        /// <summary>
-        /// 查找索引为index的元素，返回tuple的第一项表示找到的ArraySegment的索引，第二项表示项在ArraySegment的位置(在ArraySegment经过Offset的位置)
-        /// </summary>
-        /// <param name="begin">起始查找的ArraySegment的索引，包含</param>
-        /// <param name="end">结束查找的ArraySegment的索引，包含</param>
-        /// <param name="index">要在整个list中查找的索引</param>
-        /// <returns>返回tuple的第一项表示找到的ArraySegment的索引，第二项表示项在ArraySegment的位置</returns>
-        protected Tuple<int,int> BinarySearch(int begin, int end,int index)
-        {
-            if (begin > end)
-            {
-                //找不到index
-                return null;
-            }
-
-            int mid = (begin + end)/2;
-            ArraySegmentEx<T> curItem = _segments[mid];
-            if (index >= curItem.From && index <= curItem.To)
-            {
-                //找到所在的ArraySegment,获取其当前ArraySegment的索引
-                int curPosition = index - curItem.From;
-                return new Tuple<int, int>(mid,curPosition);
-            }
-
-            //查找左侧
-            if (index < curItem.From)
-            {
-                return BinarySearch(begin,mid-1,index);
-            }
-            else
-            {
-                //index > curItem.To的情况 查找右侧
-                return BinarySearch(mid+1,end,index);
-            }
-        }
-
         #endregion
 
-        #region Public Method
+        #region Public Member
 
         /// <summary>
         /// Removes the segment at index
@@ -252,7 +253,7 @@ namespace SuperSocket.Common
         /// <param name="offset">在Array中开始复制的位置</param>
         /// <param name="length">要复制的元素数目</param>
         /// <param name="isCreateNewArray">true，不使用array，而创建一个新的数组；false,使用array</param>
-        public void AddSegment(T[] array, int offset, int length, bool isCreateNewArray=false)
+        public void AddSegment(T[] array, int offset, int length, bool isCreateNewArray = false)
         {
             if (length <= 0)
             {
@@ -264,11 +265,11 @@ namespace SuperSocket.Common
 
             if (!isCreateNewArray)
             {
-                segmentToAdd = new ArraySegmentEx<T>(array,offset,length);
+                segmentToAdd = new ArraySegmentEx<T>(array, offset, length);
             }
             else
             {
-                segmentToAdd = new ArraySegmentEx<T>(array.CloneRange(offset,length),0,length);
+                segmentToAdd = new ArraySegmentEx<T>(array.CloneRange(offset, length), 0, length);
             }
 
             segmentToAdd.From = currentCount;
@@ -292,7 +293,7 @@ namespace SuperSocket.Common
         /// <returns></returns>
         public T[] ToArrayData()
         {
-            return ToArrayData(0,_count);
+            return ToArrayData(0, _count);
         }
 
         /// <summary>
@@ -329,7 +330,7 @@ namespace SuperSocket.Common
             {
                 var curSegment = _segments[i];
                 //需要复制的元素的个数
-                len = Math.Min(curSegment.Count-from,length-total);
+                len = Math.Min(curSegment.Count - from, length - total);
                 if (len > 0)
                 {
                     //len>0防止空的Segment
@@ -372,8 +373,8 @@ namespace SuperSocket.Common
                     int curFrom = curSegment.From;
                     //重置to
                     int curTo = expectedTo;
-                    _segments[i] = new ArraySegmentEx<T>(_segments[i].Array,_segments[i].Offset,curTo-curFrom+1){From = curFrom,To=curTo};
-                  
+                    _segments[i] = new ArraySegmentEx<T>(_segments[i].Array, _segments[i].Offset, curTo - curFrom + 1) { From = curFrom, To = curTo };
+
                     return;
                 }
 
@@ -397,15 +398,16 @@ namespace SuperSocket.Common
         /// <param name="to">要复制元素的目的地</param>
         /// <param name="srcIndex">复制源的起始位置</param>
         /// <param name="toIndex">目的地的起始位置</param>
-        /// <param name="length">要复制的元素的个数</param>
-        /// <returns>实际复制的数据数量</returns>
+        /// <param name="length">实际复制的数据数量</param>
+        /// <returns></returns>
         public int CopyTo(T[] to, int srcIndex, int toIndex, int length)
         {
+            //tuple的第一项表示找到的ArraySegment的索引，第二项表示项在ArraySegment的位置（将Offset视为0）
             Tuple<int, int> tuple = null;
             if (srcIndex == 0)
             {
-                //因为通常是从0开始复制的，加一个判断
-                tuple = new Tuple<int, int>(0,0);
+                //因为通常是从0开始复制的，为效率加一个判断
+                tuple = new Tuple<int, int>(0, 0);
             }
             else
             {
@@ -424,11 +426,13 @@ namespace SuperSocket.Common
 
             int copied = 0;//已经复制的元素数
             int numNeedToCopy = Math.Min(length, startItem.Count - tuple.Item2);//当前需要复制的元素数
+
             if (numNeedToCopy > 0)
             {
                 //防止空数组
+                //防止空数组
                 //tuple.Item2+startItem.Offset表示Array的起始位置
-                Array.Copy(startItem.Array, tuple.Item2 + startItem.Offset, to, toIndex,numNeedToCopy);
+                Array.Copy(startItem.Array, tuple.Item2 + startItem.Offset, to, toIndex, numNeedToCopy);
                 copied += numNeedToCopy;
             }
 
@@ -437,15 +441,15 @@ namespace SuperSocket.Common
                 //已经复制完成,实际上等于copied
                 return copied;
             }
-            
+
             //还需要复制
-            for (int i = startIndex+1; i < _segments.Count; i++)
+            for (int i = startIndex + 1; i < _segments.Count; i++)
             {
                 var segment = _segments[i];
                 numNeedToCopy = Math.Min(segment.Count, length - copied);
                 if (numNeedToCopy > 0)
                 {
-                    Array.Copy(segment.Array,segment.Offset,to,toIndex+copied,numNeedToCopy);
+                    Array.Copy(segment.Array, segment.Offset, to, toIndex + copied, numNeedToCopy);
                     copied += numNeedToCopy;
                 }
 
@@ -454,11 +458,50 @@ namespace SuperSocket.Common
                     return copied;
                 }
             }
+
             //没有复制足length个元素
             return copied;
         }
 
+        /// <summary>
+        /// 查找索引为index的元素，返回tuple的第一项表示找到的ArraySegment的索引，第二项表示项在ArraySegment的位置（在ArraySegment中经过Offset的位置，即将Offset视为0）
+        /// </summary>
+        /// <param name="begin">起始查找的ArraySegment的索引，包含</param>
+        /// <param name="end">结束查找的ArraySegment的索引，包含</param>
+        /// <param name="index">要在整个list中查找的索引，在整个ArraySegmentList中计算的索引</param>
+        /// <returns>返回tuple的第一项表示找到的ArraySegment的索引，第二项表示项在ArraySegment的位置（将Offset视为0）,如果找不到，返回null</returns>
+        public Tuple<int, int> BinarySearch(int begin, int end, int index)
+        {
+            if (begin > end)
+            {
+                //找不到index
+                return null;
+            }
+
+            int mid = (begin + end)/2;
+            ArraySegmentEx<T> midItem = _segments[mid];
+
+            if (index >= midItem.From && index <= midItem.To)
+            {
+                //找到所在的ArraySegment，获取其当前ArraySegment的索引
+                int curPosition = index - midItem.From;
+                return new Tuple<int, int>(mid,curPosition);
+            }
+
+            //查找左侧
+            if (index < midItem.From)
+            {
+                return BinarySearch(begin, mid - 1, index);
+            }
+            else
+            {
+                //index > curItem.To的情况 查找右侧
+                return BinarySearch(mid + 1, end, index);
+            }
+        }
+
         #endregion
+
 
         #region Public Properties
 
@@ -479,6 +522,7 @@ namespace SuperSocket.Common
     /// </summary>
     public class ArraySegmentList : ArraySegmentList<byte>
     {
+
         /// <summary>
         /// 使用UTF8解析字符串
         /// </summary>
@@ -515,7 +559,7 @@ namespace SuperSocket.Common
             Tuple<int, int> tuple = null;
             if (offset == 0)
             {
-                tuple = new Tuple<int, int>(0,0);
+                tuple = new Tuple<int, int>(0, 0);
             }
             else
             {
@@ -548,7 +592,7 @@ namespace SuperSocket.Common
                     numToDecoded = Math.Min(segment.Count - (offset - segment.From), numToDecoded);
                 }
 
-                decoder.Convert(segment.Array,decodeOffset,numToDecoded,charBuffer,charTotal,charBuffer.Length-charTotal,i==SegmentCount -1,out byteUsed,out charUsed,out completed);
+                decoder.Convert(segment.Array, decodeOffset, numToDecoded, charBuffer, charTotal, charBuffer.Length - charTotal, i == SegmentCount - 1, out byteUsed, out charUsed, out completed);
 
                 byteTotal += byteUsed;
                 charTotal += charUsed;
@@ -564,58 +608,4 @@ namespace SuperSocket.Common
         }
 
     }
-
-    #region 辅助类
-    /// <summary>
-    /// ArraySegment拓展
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ArraySegmentEx<T>
-    {
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="array"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        public ArraySegmentEx(T[] array, int offset, int count)
-        {
-            ArraySegment = new ArraySegment<T>(array, offset, count);
-        }
-
-        #region Properties
-
-        /// <summary>
-        /// 底层存储
-        /// </summary>
-        public ArraySegment<T> ArraySegment { get; private set; }
-
-        /// <summary>
-        /// 底层数组
-        /// </summary>
-        public T[] Array { get { return ArraySegment.Array; } }
-
-        /// <summary>
-        /// ArraySegment中的元素数目
-        /// </summary>
-        public int Count { get { return ArraySegment.Count; } }
-
-        /// <summary>
-        /// 获取ArraySegment在底层数组的偏移量
-        /// </summary>
-        public int Offset { get { return ArraySegment.Offset; } }
-
-        /// <summary>
-        /// 这里的From并不是指Offset，而是在一个ArraySegmentList中的索引起始位置
-        /// </summary>
-        public int From { get; set; }
-
-        /// <summary>
-        /// 在一个ArraySegmentList中的索引结束位置=from+count-1
-        /// </summary>
-        public int To { get; set; }
-
-        #endregion
-    }
-    #endregion
 }

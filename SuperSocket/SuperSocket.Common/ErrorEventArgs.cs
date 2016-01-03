@@ -9,8 +9,9 @@ namespace SuperSocket.Common
     /// <summary>
     /// EventArgs for error and exception
     /// </summary>
-    public class ErrorEventArgs:EventArgs
+    public class ErrorEventArgs : EventArgs
     {
+
         /// <summary>
         /// Gets the exception.
         /// </summary>
@@ -33,5 +34,6 @@ namespace SuperSocket.Common
         {
             Exception = exception;
         }
+
     }
 }

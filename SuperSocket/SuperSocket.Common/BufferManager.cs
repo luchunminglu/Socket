@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 namespace SuperSocket.Common
 {
     /// <summary>
-    /// 创建一个大型缓冲区，该缓冲区可以进行分割并指定给 SocketAsyncEventArgs 对象以便用在每个套接字 I/O 操作中。这样可以很方便地重用缓冲区，并防止堆内存碎片化。
-    /// The operations exposed on the BufferManager class are not thread safe.
+    /// 创建一个大型缓冲区，该缓冲区可以进行分割并指定给SocketAsyncEventArgs对象以便用在每个套接字I/O操作中。这样可以很方便的重用缓冲区，并防止堆内存碎片化
+    /// The operations exposed on the BufferManager class are not thread safe
     /// </summary>
     public class BufferManager
     {
+
         /// <summary>
         ///  The total number of bytes controlled by the buffer pool
         /// </summary>
-        private int _numBytes; 
+        private int _numBytes;
 
         /// <summary>
         /// the underlying byte arry maintained by the buffer manager
@@ -81,7 +82,7 @@ namespace SuperSocket.Common
                     return false;
                 }
 
-                args.SetBuffer(_buffer,_currentIndex,_bufferSize);
+                args.SetBuffer(_buffer, _currentIndex, _bufferSize);
                 //设置currentIndex为当前可用的起始索引
                 _currentIndex += _bufferSize;
             }
@@ -99,7 +100,7 @@ namespace SuperSocket.Common
 
             _freeIndexPool.Push(args.Offset);
             //此方法将 Buffer 属性设置为 null，将 Count 和Offset 属性设置为 zero
-            args.SetBuffer(null,0,0);
+            args.SetBuffer(null, 0, 0);
         }
 
     }

@@ -11,8 +11,9 @@ namespace SuperSocket.Common
     /// </summary>
     public static class BinaryUtil
     {
+
         /// <summary>
-        /// 在source中从pos开始查找length个元素，返回与target匹配的元素
+        /// 在source中从pos开始查找length个元素，返回第一个与target匹配的元素的索引
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
@@ -22,7 +23,7 @@ namespace SuperSocket.Common
         /// <returns>如果找到，返回其索引，否则返回-1</returns>
         public static int IndexOf<T>(this IList<T> source, T target, int pos, int length) where T:IEquatable<T>
         {
-            for (int i = pos; i < pos+length; i++)
+            for (int i = pos; i < pos + length; i++)
             {
                 if (source[i].Equals(target))
                 {
@@ -63,7 +64,7 @@ namespace SuperSocket.Common
                 throw new Exception("the search mark is null or empty");
             }
 
-            for (int i = offset; i <= offset+length-mark.Length; i++)
+            for (int i = offset; i <= offset + length - mark.Length; i++)
             {
                 for (int j = 0; j < mark.Length; j++)
                 {
@@ -113,11 +114,11 @@ namespace SuperSocket.Common
                 throw new Exception("the search mark is null or empty");
             }
 
-            int endOffset = offset + length - 1;
+            int endOffset = length - 1;
 
             for (int i = 0; i < mark.Length; i++)
             {
-                if (offset + i > endOffset)
+                if (i > endOffset)
                 {
                     return -1;
                 }
@@ -127,6 +128,7 @@ namespace SuperSocket.Common
                     return -1;
                 }
             }
+
             return offset;
         }
 
@@ -165,13 +167,13 @@ namespace SuperSocket.Common
 
             for (int i = 0; i < mark.Length; i++)
             {
-                if (!source[length + offset - mark.Length+i].Equals(mark[i]))
+                if (!source[length + offset - mark.Length + i].Equals(mark[i]))
                 {
                     return -1;
                 }
             }
 
-            return length+offset-mark.Length;
+            return length + offset - mark.Length;
         }
 
         /// <summary>
@@ -190,7 +192,7 @@ namespace SuperSocket.Common
             if (array != null)
             {
                 target = new T[length];
-                Array.Copy(array,offset,target,0,length);
+                Array.Copy(array, offset, target, 0, length);
                 return target;
             }
 

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace SuperSocket.Common
 {
+    /// <summary>
+    /// 字符串操作类
+    /// 主要优化了字符串的比较
+    /// </summary>
     public static class StringUtils
     {
-
-        #region 常用
-
+        #region 格式化
         /// <summary>
         /// format
         /// </summary>
@@ -48,6 +50,10 @@ namespace SuperSocket.Common
             return s.Trim();
         }
 
+        #endregion
+
+        #region 相等判断
+
         /// <summary>
         /// 忽略字符串前后空白，比较字符串是否相同
         /// </summary>
@@ -78,6 +84,9 @@ namespace SuperSocket.Common
             }
         }
 
+        #endregion
+
+        #region 将多个字符串按顺序连成一个
         /// <summary>
         /// 组合字符串，并且如果数据项为null，则用String.Empty连接
         /// </summary>
@@ -129,7 +138,9 @@ namespace SuperSocket.Common
 
             return sb.ToString();
         }
+        #endregion
 
+        #region 判断字符串集合是否包含自定的字符串
         /// <summary>
         /// 判断数组是否包含指定字符串。
         /// 如果数组本身为null或者空，返回false.

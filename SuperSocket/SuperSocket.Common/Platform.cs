@@ -17,7 +17,7 @@ namespace SuperSocket.Common
             Socket socket = null;
             try
             {
-                socket = new Socket(AddressFamily.InterNetwork,SocketType.Stream, ProtocolType.Tcp);
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.IOControl(IOControlCode.KeepAliveValues, null, null);
                 SupportSocketIOControlByCodeEnum = true;
             }

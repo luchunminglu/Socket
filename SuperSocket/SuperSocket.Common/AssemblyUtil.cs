@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,7 +36,7 @@ namespace SuperSocket.Common
         /// <returns></returns>
         public static T CreateInstance<T>(string type, object[] parameters)
         {
-            Type instanceType = Type.GetType(type,true);
+            Type instanceType = Type.GetType(type, true);
             if (instanceType == null)
             {
                 throw new Exception("type {0} not found".FormatWith(type));
@@ -64,7 +62,7 @@ namespace SuperSocket.Common
             {
                 return targetType;
             }
-            
+
             try
             {
                 //System.Collections.Generic.List`1[System.IO.FileInfo]
@@ -108,7 +106,7 @@ namespace SuperSocket.Common
         /// <returns></returns>
         public static IEnumerable<Type> GetImplementTypes<TBaseType>(this Assembly assembly)
         {
-            return assembly.GetExportedTypes().Where(t => t.IsSubclassOf(typeof (TBaseType)) && t.IsClass && !t.IsAbstract);
+            return assembly.GetExportedTypes().Where(t => t.IsSubclassOf(typeof(TBaseType)) && t.IsClass && !t.IsAbstract);
         }
 
         /// <summary>
@@ -119,7 +117,7 @@ namespace SuperSocket.Common
         /// <returns></returns>
         public static IEnumerable<TBaseInterface> GetImplementedObjectsByInterfaces<TBaseInterface>(this Assembly assembly) where TBaseInterface : class
         {
-            return GetImplementedObjectsByInterfaces<TBaseInterface>(assembly,typeof(TBaseInterface));
+            return GetImplementedObjectsByInterfaces<TBaseInterface>(assembly, typeof(TBaseInterface));
         }
 
         /// <summary>
@@ -129,11 +127,11 @@ namespace SuperSocket.Common
         /// <param name="assembly"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        private static IEnumerable<TBaseInterface> GetImplementedObjectsByInterfaces<TBaseInterface>(Assembly assembly, Type type) where TBaseInterface:class
+        private static IEnumerable<TBaseInterface> GetImplementedObjectsByInterfaces<TBaseInterface>(Assembly assembly, Type type) where TBaseInterface : class
         {
             return assembly.GetExportedTypes()
                     .Where(r => !r.IsAbstract && type.IsAssignableFrom(r))
-                    .Select(r => (TBaseInterface) Activator.CreateInstance(r));
+                    .Select(r => (TBaseInterface)Activator.CreateInstance(r));
         }
 
         /// <summary>
@@ -147,9 +145,9 @@ namespace SuperSocket.Common
             BinaryFormatter formatter = new BinaryFormatter();
             using (MemoryStream ms = new MemoryStream())
             {
-                formatter.Serialize(ms,target);
+                formatter.Serialize(ms, target);
                 ms.Position = 0;
-                return (T) formatter.Deserialize(ms);
+                return (T)formatter.Deserialize(ms);
             }
         }
 
@@ -160,7 +158,7 @@ namespace SuperSocket.Common
         /// <param name="source"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public static T CopyPropertiesTo<T>(this T source,  T target)
+        public static T CopyPropertiesTo<T>(this T source, T target)
         {
             return source.CopyPropertiesTo(p => true, target);
         }
@@ -179,7 +177,7 @@ namespace SuperSocket.Common
 
             Dictionary<string, PropertyInfo> sourcePropertiesDict = properties.ToDictionary(p => p.Name);
 
-            PropertyInfo[] targetProperties = target.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty).Where(p=>predict(p)).ToArray();
+            PropertyInfo[] targetProperties = target.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty).Where(p => predict(p)).ToArray();
 
             for (int i = 0; i < targetProperties.Length; i++)
             {
@@ -198,7 +196,7 @@ namespace SuperSocket.Common
                         continue;
                     }
 
-                    targetProperty.SetValue(target,sourceProperty.GetValue(source,null),null);
+                    targetProperty.SetValue(target, sourceProperty.GetValue(source, null), null);
                 }
             }
 
@@ -230,7 +228,7 @@ namespace SuperSocket.Common
             }
 
             return result;
-        } 
+        }
 
     }
 }

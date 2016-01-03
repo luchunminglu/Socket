@@ -10,9 +10,9 @@ namespace SuperSocket.Common
     /// SearchMarkState
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SearchMarkState<T>
-        where T : IEquatable<T>
+    public class SearchMarkState<T> where T:IEquatable<T>
     {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchMarkState&lt;T&gt;"/> class.
         /// </summary>
@@ -34,5 +34,6 @@ namespace SuperSocket.Common
         /// The matched.
         /// </value>
         public int Matched { get; set; }
+
     }
 }
