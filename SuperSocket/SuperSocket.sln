@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.Common", "Super
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Docs", "Docs\Docs.csproj", "{75D6FFF2-330D-4A5C-BF05-143388B7DD28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperSocket.SocketBase", "SuperSocket.SocketBase\SuperSocket.SocketBase.csproj", "{56C8455E-C755-4480-8E1A-CDA5C4B202CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{75D6FFF2-330D-4A5C-BF05-143388B7DD28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75D6FFF2-330D-4A5C-BF05-143388B7DD28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75D6FFF2-330D-4A5C-BF05-143388B7DD28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56C8455E-C755-4480-8E1A-CDA5C4B202CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56C8455E-C755-4480-8E1A-CDA5C4B202CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56C8455E-C755-4480-8E1A-CDA5C4B202CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56C8455E-C755-4480-8E1A-CDA5C4B202CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
